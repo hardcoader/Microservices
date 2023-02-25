@@ -1,0 +1,40 @@
+server:
+  port: 8787
+  
+spring:
+  application:
+    name: GETWAY-APP 
+
+  cloud:
+    gateway:
+      routes:
+      - id:  order-id
+        uri: lb://ORDER-APP
+        predicates:
+        - Path=/order/**
+        filters:
+           - name: CircuitBreaker
+             args:
+                name: order-service
+                fallbackuri: forward:/orderFall
+      - id:  payment-id
+        uri: lb://PAYMENT-APP
+        predicates:
+        - Path=/payment/**
+        filters:
+           - name: CircuitBreaker
+             args:
+                name: payment-service
+                fallbackuri: forward:/paymentFall
+
+    
+ 
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        
+        
+        
